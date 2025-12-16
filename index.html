@@ -847,34 +847,31 @@ const FEATURED_REPOS = [
 /* =========================================================
    HELPERS
 ========================================================= */
-const $ = s => document.querySelector(s);
+const $ = (s) => document.querySelector(s);
 
-const normalize = s => (s ?? "").toLowerCase();
-const formatDate = d =>
-  new Date(d).toLocaleDateString(undefined, { year: "numeric", month: "short" });
+const normalize = (s) => (s ?? "").toLowerCase().trim();
 
-/* =========================================================
-   THEME
-========================================================= */
-function loadTheme() {
-  const t = localStorage.getItem("theme");
-  if (t) document.documentElement.setAttribute("data-theme", t);
-}
-function toggleTheme() {
-  const t = document.documentElement.getAttribute("data-theme") === "light"
-    ? "dark"
-    : "light";
-  document.documentElement.setAttribute("data-theme", t);
-  localStorage.setItem("theme", t);
-}
+const formatDate = (iso) =>
+  new Date(iso).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 
 /* =========================================================
-   NEOCITIES-SAFE FETCH (IMPORTANT)
+   GITHUB API (DIRECT – GitHub Pages SAFE)
 ========================================================= */
 async function gh(url) {
-  const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-  const res = await fetch(proxy);
-  if (!res.ok) throw new Error("GitHub fetch failed");
+  const res = await fetch(url, {
+    headers: {
+      "Accept": "application/vnd.github+json"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`GitHub API error ${res.status}`);
+  }
+
   return res.json();
 }
 
@@ -893,93 +890,119 @@ async function loadProfile() {
   $("#followers").textContent = d.followers;
   $("#following").textContent = d.following;
 
-  $("#bioLine").textContent = d.bio || "Game dev. Ethical hacker. Chaos creator.";
-  $("#aboutText").textContent = d.bio || "";
+  const bio =
+    d.bio || "Game developer. Ethical hacker. Professional chaos creator.";
+
+  $("#bioLine").textContent = bio;
+  $("#aboutText").textContent = bio;
+
+  if (d.blog) {
+    $("#siteLink").href = d.blog.startsWith("http")
+      ? d.blog
+      : `https://${d.blog}`;
+  }
 }
 
 /* =========================================================
    PROJECTS
 ========================================================= */
-let repos = [];
-const pinnedOrder = new Map(FEATURED_REPOS.map((r, i) => [r.toLowerCase(), i]));
+let reposCache = [];
+const pinnedOrder = new Map(
+  FEATURED_REPOS.map((name, i) => [name.toLowerCase(), i])
+);
 
-function card(r) {
+function projectCard(r) {
   return `
-  <a class="card" href="${r.html_url}" target="_blank">
-    <div class="card-top">
-      <div class="card-title">${r.name}</div>
-      <div class="chip">${r.language || "Mixed"}</div>
-    </div>
-    <div class="card-desc">${r.description || "Still cooking..."}</div>
-    <div class="meta">
-      <span>★ ${r.stargazers_count}</span>
-      <span>⟳ ${formatDate(r.updated_at)}</span>
-    </div>
-  </a>`;
+    <a class="card" href="${r.html_url}" target="_blank" rel="noreferrer">
+      <div class="card-top">
+        <div class="card-title">${r.name}</div>
+        <div class="chip">${r.language || "Mixed"}</div>
+      </div>
+
+      <div class="card-desc">
+        ${r.description || "No description yet. Still cooking."}
+      </div>
+
+      <div class="tags">
+        <span class="tag">#featured</span>
+      </div>
+
+      <div class="meta">
+        <span>★ ${r.stargazers_count}</span>
+        <span>⑂ ${r.forks_count}</span>
+        <span>⟳ ${formatDate(r.updated_at)}</span>
+      </div>
+    </a>
+  `;
 }
 
-function render(list) {
-  $("#projectsGrid").innerHTML = list.map(card).join("");
+function renderProjects(list) {
+  $("#projectsGrid").innerHTML = list.map(projectCard).join("");
 }
 
-function applySort() {
+function applyFilterAndSort() {
   const q = normalize($("#search").value);
   const sort = $("#sort").value;
 
-  let list = repos.filter(r =>
+  let list = reposCache.filter((r) =>
     `${normalize(r.name)} ${normalize(r.description)} ${normalize(r.language)}`
       .includes(q)
   );
 
   if (sort === "pinned") {
-    list.sort((a, b) =>
-      (pinnedOrder.get(a.name.toLowerCase()) ?? 999) -
-      (pinnedOrder.get(b.name.toLowerCase()) ?? 999)
+    list.sort(
+      (a, b) =>
+        (pinnedOrder.get(a.name.toLowerCase()) ?? 999) -
+        (pinnedOrder.get(b.name.toLowerCase()) ?? 999)
     );
   } else if (sort === "stars") {
     list.sort((a, b) => b.stargazers_count - a.stargazers_count);
-  } else {
+  } else if (sort === "updated") {
     list.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  } else {
+    list.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  render(list);
+  renderProjects(list);
 }
 
-async function loadProjects() {
-  const all = await gh(
-    `https://api.github.com/users/${USERNAME}/repos?per_page=100`
+async function loadFeaturedProjects() {
+  const allRepos = await gh(
+    `https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=updated`
   );
-  const wanted = new Set(FEATURED_REPOS.map(r => r.toLowerCase()));
-  repos = all.filter(r => wanted.has(r.name.toLowerCase()));
-  applySort();
+
+  const wanted = new Set(FEATURED_REPOS.map((r) => r.toLowerCase()));
+  reposCache = allRepos.filter((r) =>
+    wanted.has(r.name.toLowerCase())
+  );
+
+  applyFilterAndSort();
 }
 
 /* =========================================================
    INIT
 ========================================================= */
-(async function () {
-  loadTheme();
-  $("#year").textContent = new Date().getFullYear();
-
-  $("#themeBtn").onclick = toggleTheme;
-  $("#search").oninput = applySort;
-  $("#sort").onchange = applySort;
-
+(async function initGitHub() {
   try {
     await loadProfile();
-    await loadProjects();
-  } catch (e) {
+    await loadFeaturedProjects();
+
+    $("#search").addEventListener("input", applyFilterAndSort);
+    $("#sort").addEventListener("change", applyFilterAndSort);
+  } catch (err) {
+    console.error(err);
     $("#projectsGrid").innerHTML = `
       <div class="card" style="grid-column:1/-1">
-        <div class="card-title">Projects unavailable</div>
+        <div class="card-title">Failed to load projects</div>
         <div class="card-desc">
-          Neocities blocks direct GitHub API calls.<br>
-          This fallback keeps the site stable.
+          GitHub API rate limit or network issue. Try again later.
         </div>
-      </div>`;
+      </div>
+    `;
   }
 })();
 </script>
+
 
 
 </body>
