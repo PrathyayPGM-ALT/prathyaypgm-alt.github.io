@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prathyay • Portfolio</title>
+  <meta name="description" content="Prathyay — Game Developer • Ethical Hacker • Professional Chaos Creator" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<style>
+:root{
+  --bg: #0b0c10;
+  --panel: rgba(255,255,255,0.06);
+  --panel2: rgba(255,255,255,0.09);
+  --text: rgba(255,255,255,0.88);
+  --muted: rgba(255,255,255,0.65);
+  --border: rgba(255,255,255,0.12);
+  --shadow: 0 20px 60px rgba(0,0,0,0.55);
+  --radius: 18px;
+  --radius2: 26px;
+  --accent: #7c3aed;
+  --accent2: #22c55e;
+  --danger: #ef4444;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+[data-theme="light"]{
+  --bg: #f7f7fb;
+  --panel: rgba(10,10,20,0.05);
+  --panel2: rgba(10,10,20,0.08);
+  --text: rgba(10,10,20,0.90);
+  --muted: rgba(10,10,20,0.62);
+  --border: rgba(10,10,20,0.12);
+  --shadow: 0 20px 60px rgba(20,20,40,0.15);
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  font-family:"Space Grotesk", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x:hidden;
+}
+
+a{ color: inherit; text-decoration:none; }
+a:hover{ opacity:0.92; }
+
+.bg-glow{
+  position:fixed;
+  inset:-20vh -20vw;
+  background:
+    radial-gradient(600px 300px at 20% 10%, rgba(124,58,237,0.35), transparent 60%),
+    radial-gradient(500px 280px at 75% 20%, rgba(34,197,94,0.22), transparent 55%),
+    radial-gradient(700px 400px at 50% 80%, rgba(59,130,246,0.18), transparent 60%);
+  filter: blur(20px);
+  z-index:-1;
+  opacity: 0.9;
+}
+
+.nav{
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  background: color-mix(in oklab, var(--bg) 86%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:700;
+  letter-spacing:0.2px;
+}
+.brand-dot{
+  width:10px;height:10px;border-radius:999px;
+  background: linear-gradient(135deg, var(--accent), #38bdf8);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--accent) 25%, transparent);
+}
+
+.nav-links{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+.nav-links a{
+  color: var(--muted);
+  padding:10px 10px;
+  border-radius:10px;
+}
+.nav-links a:hover{
+  color: var(--text);
+  background: var(--panel);
+}
+
+.nav-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), #2563eb);
+  border:1px solid color-mix(in oklab, var(--accent) 45%, transparent);
+  color:white;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  cursor:pointer;
+}
+.btn:hover{ transform: translateY(-1px); box-shadow: 0 18px 50px rgba(0,0,0,0.34); }
+.btn:active{ transform: translateY(0px); }
+.btn.ghost{
+  background: transparent;
+  border:1px solid var(--border);
+  color: var(--text);
+  box-shadow:none;
+}
+.btn.ghost:hover{
+  background: var(--panel);
+}
+
+.btn.small{
+  padding:9px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.icon{ font-family: var(--mono); opacity:0.9; }
+
+.hamburger{
+  display:none;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:10px;
+  cursor:pointer;
+}
+.hamburger span{
+  display:block;
+  width:18px;
+  height:2px;
+  background: var(--text);
+  margin:4px 0;
+  opacity:0.9;
+}
+
+.drawer{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  display:none;
+  z-index:50;
+}
+.drawer-inner{
+  position:absolute;
+  right:16px;
+  top:70px;
+  width:min(92vw, 360px);
+  background: color-mix(in oklab, var(--bg) 92%, transparent);
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:14px;
+}
+.drawer-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.drawer-title{ font-weight:700; }
+.drawer-link{
+  display:block;
+  padding:12px 12px;
+  border-radius: 12px;
+  color: var(--muted);
+}
+.drawer-link:hover{
+  background: var(--panel);
+  color: var(--text);
+}
+.drawer-cta{ margin-top:10px; }
+
+main{ padding: 26px 18px 60px; }
+.hero{
+  max-width: 1100px;
+  margin: 18px auto 32px;
+  display:grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.badge{
+  display:inline-flex;
+  gap:10px;
+  align-items:center;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  background: var(--panel);
+  border-radius: 999px;
+  color: var(--muted);
+  width: fit-content;
+}
+.ping{
+  width:10px;height:10px;border-radius:999px;
+  background: var(--accent2);
+  box-shadow: 0 0 0 8px color-mix(in oklab, var(--accent2) 20%, transparent);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{ transform: scale(1); opacity:0.9; }
+  50%{ transform: scale(1.12); opacity:0.65; }
+}
+
+.headline{
+  margin:14px 0 10px;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1.05;
+}
+.grad{
+  background: linear-gradient(135deg, #a78bfa, #38bdf8, #22c55e);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.muted{ color: var(--muted); font-weight: 600; }
+
+.subhead{
+  margin: 10px 0 16px;
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 64ch;
+}
+
+.hero-cta{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom: 12px;
+}
+.quick-links{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pill{
+  border:1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  padding:10px 12px;
+  border-radius: 999px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.pill:hover{ transform: translateY(-1px); background: var(--panel2); }
+
+.profile-card{
+  height:100%;
+  border:1px solid var(--border);
+  background: color-mix(in oklab, var(--panel) 95%, transparent);
+  border-radius: var(--radius2);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.profile-top{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+.avatar{
+  width:64px;height:64px;border-radius: 18px;
+  border:1px solid var(--border);
+  background: var(--panel);
+  object-fit:cover;
+}
+.name-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.name{ font-weight:800; font-size: 18px; }
+.handle{ color: var(--muted); font-family: var(--mono); font-size: 13px; margin-top:2px; }
+.chip{
+  font-size: 12px;
+  color: var(--muted);
+  border:1px solid var(--border);
+  padding:6px 10px;
+  border-radius: 999px;
+  background: var(--panel);
+}
+
+.stats{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:10px;
+}
+.stat{
+  border:1px solid var(--border);
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 12px;
+}
+.stat-num{ font-weight: 800; font-size: 18px; }
+.stat-label{ color: var(--muted); font-size: 12px; margin-top:4px; }
+
+.profile-actions{
+  display:flex;
+  gap:10px;
+}
+.mini-note{
+  margin-top:auto;
+  color: var(--muted);
+  display:flex;
+  gap:8px;
+  align-items:center;
+  border-top:1px solid var(--border);
+  padding-top:12px;
+}
+.spark{ color: #a78bfa; }
+
+.section{
+  max-width: 1100px;
+  margin: 34px auto;
+}
+.section-head h2{
+  margin:0;
+  font-size: 26px;
+}
+.section-head p{
+  margin: 8px 0 0;
+  color: var(--muted);
+  max-width: 80ch;
+}
+
+.toolbar{
+  margin-top: 14px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.search-wrap{ flex: 1; min-width: 220px; }
+.search{
+  width:100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border:1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  outline:none;
+}
+.search::placeholder{ color: color-mix(in oklab, var(--muted) 85%, transparent); }
+.select{
+  padding: 12px 12px;
+  border-radius: 14px;
+  border:1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  outline:none;
+}
+
+.grid{
+  margin-top: 14px;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.card{
+  border:1px solid var(--border);
+  background: var(--panel);
+  border-radius: var(--radius2);
+  padding: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+  display:flex;
+  flex-direction:column;
+  min-height: 220px;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-120px -120px auto auto;
+  width:220px;height:220px;border-radius:999px;
+  background: radial-gradient(circle at 30% 30%, rgba(124,58,237,0.24), transparent 60%);
+  filter: blur(2px);
+  pointer-events:none;
+}
+.card:hover{
+  transform: translateY(-3px);
+  background: var(--panel2);
+  border-color: color-mix(in oklab, var(--accent) 30%, var(--border));
+}
+.card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.card-title{
+  font-weight:800;
+  letter-spacing:0.2px;
+}
+.card-desc{
+  margin: 8px 0 12px;
+  color: var(--muted);
+  line-height: 1.4;
+  min-height: 3.4em;
+}
+.tags{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:auto;
+}
+.tag{
+  font-size: 12px;
+  color: var(--muted);
+  border:1px solid var(--border);
+  background: color-mix(in oklab, var(--panel) 92%, transparent);
+  padding:6px 10px;
+  border-radius: 999px;
+  font-family: var(--mono);
+}
+.meta{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 10px;
+}
+.meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--border);
+  background: color-mix(in oklab, var(--panel) 90%, transparent);
+  padding:6px 10px;
+  border-radius: 999px;
+  font-family: var(--mono);
+}
+
+.center{ display:flex; justify-content:center; margin-top: 16px; }
+
+.skills{
+  margin-top: 14px;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.skill-card{
+  border:1px solid var(--border);
+  background: var(--panel);
+  border-radius: var(--radius2);
+  padding: 16px;
+}
+.skill-card h3{ margin:0 0 10px; }
+.skill-card ul{ margin:0; padding-left: 18px; color: var(--muted); }
+.skill-card li{ margin: 6px 0; }
+
+.about{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.about-card{
+  border:1px solid var(--border);
+  background: var(--panel);
+  border-radius: var(--radius2);
+  padding: 16px;
+  color: var(--muted);
+}
+.about-card h3{ margin:0 0 10px; color: var(--text); }
+
+.contact{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 14px;
+}
+.contact-card{
+  border:1px solid var(--border);
+  background: var(--panel);
+  border-radius: var(--radius2);
+  padding: 16px;
+}
+.contact-card h3{ margin:0 0 8px; }
+.contact-card p{ margin:0; color: var(--muted); line-height:1.5; }
+.contact-actions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
+.mono{ font-family: var(--mono); }
+
+.contact-form{
+  border:1px solid var(--border);
+  background: var(--panel);
+  border-radius: var(--radius2);
+  padding: 16px;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+label{ display:flex; flex-direction:column; gap:8px; color: var(--muted); font-size: 13px; }
+input, textarea{
+  width:100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border:1px solid var(--border);
+  background: color-mix(in oklab, var(--panel) 92%, transparent);
+  color: var(--text);
+  outline:none;
+  font-family: inherit;
+}
+textarea{ resize: vertical; }
+.hint{ margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+
+.footer{
+  max-width: 1100px;
+  margin: 34px auto 0;
+  padding-top: 18px;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  color: var(--muted);
+}
+.to-top{ color: var(--muted); }
+.to-top:hover{ color: var(--text); }
+
+@media (max-width: 980px){
+  .hero{ grid-template-columns: 1fr; }
+  .grid{ grid-template-columns: repeat(2, 1fr); }
+  .skills{ grid-template-columns: 1fr; }
+  .about{ grid-template-columns: 1fr; }
+  .contact{ grid-template-columns: 1fr; }
+}
+@media (max-width: 760px){
+  .nav-links, .nav-actions{ display:none; }
+  .hamburger{ display:block; }
+  .grid{ grid-template-columns: 1fr; }
+}
+
+</style>
+
+<body>
+  <!-- Background glow -->
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- Top nav -->
+  <header class="nav">
+    <a class="brand" href="#top" aria-label="Go to top">
+      <span class="brand-dot"></span>
+      <span>Prathyay</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button id="themeBtn" class="btn ghost" type="button" aria-label="Toggle theme">
+        <span class="icon">◐</span>
+      </button>
+      <a class="btn" id="githubBtn" href="https://github.com/PrathyayPGM-ALT" target="_blank" rel="noreferrer">
+        GitHub
+      </a>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- Mobile drawer -->
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-inner">
+      <div class="drawer-top">
+        <div class="drawer-title">Menu</div>
+        <button class="btn ghost" id="closeDrawer" type="button" aria-label="Close menu">✕</button>
+      </div>
+      <a href="#projects" class="drawer-link">Projects</a>
+      <a href="#skills" class="drawer-link">Skills</a>
+      <a href="#about" class="drawer-link">About</a>
+      <a href="#contact" class="drawer-link">Contact</a>
+
+      <div class="drawer-cta">
+        <a class="btn" href="https://github.com/PrathyayPGM-ALT" target="_blank" rel="noreferrer">Open GitHub</a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-left">
+        <div class="badge" id="statusBadge">
+          <span class="ping"></span>
+          <span>Building games. Breaking things (legally).</span>
+        </div>
+
+        <h1 class="headline">
+          <span class="grad">Prathyay</span><br/>
+          <span class="muted">Game Developer • Ethical Hacker</span><br/>
+          <span class="muted">Professional Chaos Creator</span>
+        </h1>
+
+        <p class="subhead" id="bioLine">
+          Loading your GitHub profile…
+        </p>
+
+        <div class="hero-cta">
+          <a class="btn" href="#projects">View Projects</a>
+          <a class="btn ghost" href="#contact">Contact Me</a>
+        </div>
+
+        <div class="quick-links">
+          <a class="pill" id="siteLink" href="https://prathyay.neocities.org/" target="_blank" rel="noreferrer">Website</a>
+          <a class="pill" id="itchLink" href="https://fatal-prathyaym.itch.io/" target="_blank" rel="noreferrer">Itch.io</a>
+          <a class="pill" id="cyvLink" href="https://cyvathon.onrender.com/" target="_blank" rel="noreferrer">Cyvathon</a>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="profile-card">
+          <div class="profile-top">
+            <img id="avatar" class="avatar" alt="Prathyay avatar" />
+            <div class="profile-meta">
+              <div class="name-row">
+                <div class="name" id="name">Prathyay</div>
+                <span class="chip" id="locationChip">India</span>
+              </div>
+              <div class="handle" id="handle">@PrathyayPGM-ALT</div>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-num" id="repoCount">—</div>
+              <div class="stat-label">Repos</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num" id="followers">—</div>
+              <div class="stat-label">Followers</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num" id="following">—</div>
+              <div class="stat-label">Following</div>
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <a class="btn small" id="emailBtn" href="mailto:prathyaym@gmail.com">Email</a>
+            <a class="btn small ghost" id="resumeBtn" href="#" onclick="return false;">Resume (add later)</a>
+          </div>
+
+          <div class="mini-note">
+            <span class="spark">✦</span>
+            <span>Auto-powered by GitHub API. No hardcoded fake flex.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="section" id="projects">
+      <div class="section-head">
+        <h2>Featured Projects</h2>
+        <p>
+          These are your pinned / best projects, styled like a real portfolio.
+        </p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-wrap">
+          <input id="search" class="search" type="search" placeholder="Search projects (name, description, language)..." />
+        </div>
+        <select id="sort" class="select" aria-label="Sort projects">
+          <option value="pinned">Pinned order</option>
+          <option value="stars">Most stars</option>
+          <option value="updated">Recently updated</option>
+          <option value="name">Name A → Z</option>
+        </select>
+      </div>
+
+      <div class="grid" id="projectsGrid" aria-live="polite">
+        <!-- cards injected here -->
+      </div>
+
+      <div class="center">
+        <a class="btn ghost" href="https://github.com/PrathyayPGM-ALT?tab=repositories" target="_blank" rel="noreferrer">
+          See all repos
+        </a>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="section" id="skills">
+      <div class="section-head">
+        <h2>Skills</h2>
+        <p>What I use to build worlds, tools, and chaos.</p>
+      </div>
+
+      <div class="skills">
+        <div class="skill-card">
+          <h3>Game Dev</h3>
+          <ul>
+            <li>Python (Pygame)</li>
+            <li>Gameplay systems, UI, inventory</li>
+            <li>Optimization + polish</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h3>Security</h3>
+          <ul>
+            <li>Ethical hacking mindset</li>
+            <li>Encryption / hashing basics</li>
+            <li>Building safe-by-design tools</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h3>Web</h3>
+          <ul>
+            <li>HTML / CSS / JavaScript</li>
+            <li>Clean UI + responsive design</li>
+            <li>Deployments (GitHub Pages)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <div class="section-head">
+        <h2>About</h2>
+        <p id="aboutText">
+          “What if…?” and then things get out of hand.
+        </p>
+      </div>
+
+      <div class="about">
+        <div class="about-card">
+          <h3>What I do</h3>
+          <p>
+            I build games, systems, and tools. I like projects that feel alive:
+            crafting, combat, multiplayer ideas, and anything that makes players go “wait… what?”.
+          </p>
+        </div>
+        <div class="about-card">
+          <h3>What I am aiming for</h3>
+          <p>
+            Bigger releases. Cleaner code. Cooler mechanics. More open source.
+            Less “it works on my machine” (maybe).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="section-head">
+        <h2>Contact</h2>
+        <p>Want to collab, test a build, or hire me? Send a message.</p>
+      </div>
+
+      <div class="contact">
+        <div class="contact-card">
+          <h3>Direct</h3>
+          <p>
+            Email: <a href="mailto:prathyaym@gmail.com">prathyaym@gmail.com</a><br/>
+            Discord: <span class="mono">fatal_prathyaym</span>
+          </p>
+          <div class="contact-actions">
+            <a class="btn" href="mailto:prathyaym@gmail.com?subject=Portfolio%20Contact&body=Yo%20Prathyay%2C%0A%0A">Email Me</a>
+            <a class="btn ghost" href="https://github.com/PrathyayPGM-ALT" target="_blank" rel="noreferrer">GitHub</a>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contactForm">
+          <label>
+            Your name
+            <input required name="name" type="text" placeholder="Your name" />
+          </label>
+          <label>
+            Your email
+            <input required name="email" type="email" placeholder="you@example.com" />
+          </label>
+          <label>
+            Message
+            <textarea required name="message" rows="5" placeholder="Tell me what you are building..."></textarea>
+          </label>
+
+          <button class="btn" type="submit">Generate Email Draft</button>
+          <p class="hint" id="formHint">
+            This does not send anything automatically. It creates a mailto draft on your device.
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>© <span id="year"></span> Prathyay • Built with HTML/CSS/JS</div>
+      <a href="#top" class="to-top">Back to top ↑</a>
+    </footer>
+  </main>
+
+<script>
+/* =========================================================
+   CONFIG
+========================================================= */
+const USERNAME = "PrathyayPGM-ALT";
+
+const FEATURED_REPOS = [
+  "Hnefatafl",
+  "EncrypterDecrypter",
+  "Minecraft-but-2D",
+  "Cyvathon-Official-Website",
+  "HackingSimulator",
+  "learnin-and-earnin-C",
+];
+
+/* =========================================================
+   HELPERS
+========================================================= */
+const $ = s => document.querySelector(s);
+
+const normalize = s => (s ?? "").toLowerCase();
+const formatDate = d =>
+  new Date(d).toLocaleDateString(undefined, { year: "numeric", month: "short" });
+
+/* =========================================================
+   THEME
+========================================================= */
+function loadTheme() {
+  const t = localStorage.getItem("theme");
+  if (t) document.documentElement.setAttribute("data-theme", t);
+}
+function toggleTheme() {
+  const t = document.documentElement.getAttribute("data-theme") === "light"
+    ? "dark"
+    : "light";
+  document.documentElement.setAttribute("data-theme", t);
+  localStorage.setItem("theme", t);
+}
+
+/* =========================================================
+   NEOCITIES-SAFE FETCH (IMPORTANT)
+========================================================= */
+async function gh(url) {
+  const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+  const res = await fetch(proxy);
+  if (!res.ok) throw new Error("GitHub fetch failed");
+  return res.json();
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+async function loadProfile() {
+  const d = await gh(`https://api.github.com/users/${USERNAME}`);
+
+  $("#avatar").src = d.avatar_url;
+  $("#name").textContent = d.name || "Prathyay";
+  $("#handle").textContent = `@${d.login}`;
+  $("#locationChip").textContent = d.location || "India";
+
+  $("#repoCount").textContent = d.public_repos;
+  $("#followers").textContent = d.followers;
+  $("#following").textContent = d.following;
+
+  $("#bioLine").textContent = d.bio || "Game dev. Ethical hacker. Chaos creator.";
+  $("#aboutText").textContent = d.bio || "";
+}
+
+/* =========================================================
+   PROJECTS
+========================================================= */
+let repos = [];
+const pinnedOrder = new Map(FEATURED_REPOS.map((r, i) => [r.toLowerCase(), i]));
+
+function card(r) {
+  return `
+  <a class="card" href="${r.html_url}" target="_blank">
+    <div class="card-top">
+      <div class="card-title">${r.name}</div>
+      <div class="chip">${r.language || "Mixed"}</div>
+    </div>
+    <div class="card-desc">${r.description || "Still cooking..."}</div>
+    <div class="meta">
+      <span>★ ${r.stargazers_count}</span>
+      <span>⟳ ${formatDate(r.updated_at)}</span>
+    </div>
+  </a>`;
+}
+
+function render(list) {
+  $("#projectsGrid").innerHTML = list.map(card).join("");
+}
+
+function applySort() {
+  const q = normalize($("#search").value);
+  const sort = $("#sort").value;
+
+  let list = repos.filter(r =>
+    `${normalize(r.name)} ${normalize(r.description)} ${normalize(r.language)}`
+      .includes(q)
+  );
+
+  if (sort === "pinned") {
+    list.sort((a, b) =>
+      (pinnedOrder.get(a.name.toLowerCase()) ?? 999) -
+      (pinnedOrder.get(b.name.toLowerCase()) ?? 999)
+    );
+  } else if (sort === "stars") {
+    list.sort((a, b) => b.stargazers_count - a.stargazers_count);
+  } else {
+    list.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  }
+
+  render(list);
+}
+
+async function loadProjects() {
+  const all = await gh(
+    `https://api.github.com/users/${USERNAME}/repos?per_page=100`
+  );
+  const wanted = new Set(FEATURED_REPOS.map(r => r.toLowerCase()));
+  repos = all.filter(r => wanted.has(r.name.toLowerCase()));
+  applySort();
+}
+
+/* =========================================================
+   INIT
+========================================================= */
+(async function () {
+  loadTheme();
+  $("#year").textContent = new Date().getFullYear();
+
+  $("#themeBtn").onclick = toggleTheme;
+  $("#search").oninput = applySort;
+  $("#sort").onchange = applySort;
+
+  try {
+    await loadProfile();
+    await loadProjects();
+  } catch (e) {
+    $("#projectsGrid").innerHTML = `
+      <div class="card" style="grid-column:1/-1">
+        <div class="card-title">Projects unavailable</div>
+        <div class="card-desc">
+          Neocities blocks direct GitHub API calls.<br>
+          This fallback keeps the site stable.
+        </div>
+      </div>`;
+  }
+})();
+</script>
+
+
+</body>
+</html>
