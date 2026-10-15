@@ -1,96 +1,24 @@
-# PrathyayPGM-ALT.github.io
+# prathyaypgm-alt.github.io
 
-**My personal portfolio website hosted with GitHub Pages.**  
-This repository contains the source code for my online portfolio — a showcase of my projects, skills, and web presence.
+Fatal's website: games, repos and questionable decisions.
+Live at **https://prathyaypgm-alt.github.io**
 
-🔗 **Live Site:**  
-https://prathyaypgm-alt.github.io/prathyaypgm-alt.github.io
+## What's here
 
----
+- `index.html` — the whole site (plain HTML/CSS/JS, no build step)
+- `assets/img/` — game covers, favicon, social preview image
+- `assets/tex/` — FatalCraft textures used for its card art
+- `play/fatalcraft/` — FatalCraft compiled for the browser with [pygbag](https://github.com/pygame-web/pygbag)
 
-## 🚀 About
+## Adding a game
 
-This repository powers my **GitHub Pages** portfolio website.  
-It is a static site built using simple web technologies and is meant to act as a clean, fast, and distraction-free showcase of my work.
+Copy one of the `<article class="game">` blocks in `index.html`, swap the art, text and links,
+and set `data-tags` (`browser`, `puzzle`, `adventure`, `history`) so the filters pick it up.
 
-The site is designed to be lightweight, easy to update, and publicly accessible without any backend dependencies.
+To make a pygame game playable on the site:
 
----
-
-## 🧱 Repository Structure
-
-```text
-prathyaypgm-alt.github.io/
-├── index.html        # Main entry point for the website
-├── assets/           # Images, CSS, icons, and other static files (if present)
-├── README.md         # Project documentation
-└── other files…      # Additional pages or resources
-```
-
-- **index.html** — This is the file GitHub Pages serves by default.
-- **assets/** — Holds all supporting resources such as stylesheets and images.
-
----
-
-## 🛠️ Tech Stack
-
-This portfolio is built using:
-
-- **HTML** — Structure and content
-- **CSS** — Styling and layout (if included)
-- **GitHub Pages** — Free static site hosting
-
-No frameworks. No backend. Just clean static web pages.
-
----
-
-## 📍 Deployment & Updates
-
-This website is automatically deployed via **GitHub Pages** from the `main` branch.
-
-### To update the site:
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/PrathyayPGM-ALT/prathyaypgm-alt.github.io.git
-   ```
-
-2. Make changes to `index.html` or add assets.
-
-3. Commit and push:
-   ```sh
-   git add .
-   git commit -m "Update portfolio"
-   git push origin main
-   ```
-
-Changes go live automatically within a few minutes.
-
----
-
-## ⭐ Features
-
-- Clean and minimal portfolio layout  
-- Fast-loading static site  
-- Easy to maintain and extend  
-- Publicly accessible with no hosting costs  
-
-(Expand this section as you add more features.)
-
----
-
-## 📣 Connect With Me
-
-- **GitHub:** https://github.com/PrathyayPGM-ALT  
-- **Portfolio:** https://prathyaypgm-alt.github.io/prathyaypgm-alt.github.io  
-
----
-
-## 📄 License
-
-This project is open source and free to use.  
-Add a license file if you want to specify usage terms (for example, MIT License).
-
----
-
-Built with curiosity, chaos, and clean commits 🚀
+1. Wrap the main loop in `async def main():` and add `await asyncio.sleep(0)` after `clock.tick(...)`,
+   then call `asyncio.run(main())`.
+2. Use `.ogg` for sounds.
+3. Run `pygbag --build your_game_folder` and copy `build/web/` into `play/<game>/`.
+4. Give the card a button with `data-play="play/<game>/index.html"`.

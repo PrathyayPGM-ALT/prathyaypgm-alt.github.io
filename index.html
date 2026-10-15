@@ -1,1010 +1,544 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prathyay • Portfolio</title>
-  <meta name="description" content="Prathyay — Game Developer • Ethical Hacker • Professional Chaos Creator" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
-</head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fatal — games, repos & questionable decisions</title>
+<meta name="description" content="Fatal (Prathyay) makes 2D games in Python, Pygame and Godot. Play them here. Some of them even work.">
+<meta property="og:title" content="Fatal — I make 2D games. Some of them work.">
+<meta property="og:description" content="Play FatalCraft in your browser, check out Time Traveller's Dilemma, Ward Rounds 1944, Noble Decay and more.">
+<meta property="og:image" content="https://prathyaypgm-alt.github.io/assets/img/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg: #0b0c10;
-  --panel: rgba(255,255,255,0.06);
-  --panel2: rgba(255,255,255,0.09);
-  --text: rgba(255,255,255,0.88);
-  --muted: rgba(255,255,255,0.65);
-  --border: rgba(255,255,255,0.12);
-  --shadow: 0 20px 60px rgba(0,0,0,0.55);
-  --radius: 18px;
-  --radius2: 26px;
-  --accent: #7c3aed;
-  --accent2: #22c55e;
-  --danger: #ef4444;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --bg:#12101f; --bg2:#1a1730; --panel:#211d3a; --line:#2f2a52;
+  --ink:#0b0a14; --paper:#f6f0e4; --muted:#a9a3c4;
+  --amber:#ffc430; --teal:#48dcbe; --pink:#ff5c82; --blue:#7fa8ff;
+  --shadow:6px 6px 0 var(--ink);
+  --pixel:"Silkscreen",monospace; --body:"Rubik",system-ui,sans-serif;
 }
-
-[data-theme="light"]{
-  --bg: #f7f7fb;
-  --panel: rgba(10,10,20,0.05);
-  --panel2: rgba(10,10,20,0.08);
-  --text: rgba(10,10,20,0.90);
-  --muted: rgba(10,10,20,0.62);
-  --border: rgba(10,10,20,0.12);
-  --shadow: 0 20px 60px rgba(20,20,40,0.15);
-}
-
-*{ box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{
-  margin:0;
-  font-family:"Space Grotesk", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  background:var(--bg); color:var(--paper); font-family:var(--body); line-height:1.55;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.05) 1px, transparent 0);
+  background-size:24px 24px;
   overflow-x:hidden;
 }
+a{color:inherit}
+img{image-rendering:pixelated;display:block;max-width:100%}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
 
-a{ color: inherit; text-decoration:none; }
-a:hover{ opacity:0.92; }
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:50;background:rgba(18,16,31,.88);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.logo{font-family:var(--pixel);font-size:22px;color:var(--amber);text-decoration:none;text-shadow:3px 3px 0 var(--pink)}
+nav ul{display:flex;gap:6px;list-style:none}
+nav ul a{font-family:var(--pixel);font-size:13px;text-decoration:none;padding:8px 10px;color:var(--muted)}
+nav ul a:hover{color:var(--paper);background:var(--panel)}
 
-.bg-glow{
-  position:fixed;
-  inset:-20vh -20vw;
-  background:
-    radial-gradient(600px 300px at 20% 10%, rgba(124,58,237,0.35), transparent 60%),
-    radial-gradient(500px 280px at 75% 20%, rgba(34,197,94,0.22), transparent 55%),
-    radial-gradient(700px 400px at 50% 80%, rgba(59,130,246,0.18), transparent 60%);
-  filter: blur(20px);
-  z-index:-1;
-  opacity: 0.9;
-}
-
-.nav{
-  position:sticky;
-  top:0;
-  z-index:20;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  padding:14px 18px;
-  border-bottom:1px solid var(--border);
-  background: color-mix(in oklab, var(--bg) 86%, transparent);
-  backdrop-filter: blur(12px);
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:700;
-  letter-spacing:0.2px;
-}
-.brand-dot{
-  width:10px;height:10px;border-radius:999px;
-  background: linear-gradient(135deg, var(--accent), #38bdf8);
-  box-shadow: 0 0 0 6px color-mix(in oklab, var(--accent) 25%, transparent);
-}
-
-.nav-links{
-  display:flex;
-  gap:18px;
-  align-items:center;
-}
-.nav-links a{
-  color: var(--muted);
-  padding:10px 10px;
-  border-radius:10px;
-}
-.nav-links a:hover{
-  color: var(--text);
-  background: var(--panel);
-}
-
-.nav-actions{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-
+/* ---------- buttons / chips ---------- */
 .btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:10px 14px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--accent), #2563eb);
-  border:1px solid color-mix(in oklab, var(--accent) 45%, transparent);
-  color:white;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.28);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-  cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--pixel);font-size:14px;
+  padding:12px 18px;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);
+  background:var(--amber);color:var(--ink);text-decoration:none;cursor:pointer;
+  transition:transform .08s, box-shadow .08s;
 }
-.btn:hover{ transform: translateY(-1px); box-shadow: 0 18px 50px rgba(0,0,0,0.34); }
-.btn:active{ transform: translateY(0px); }
-.btn.ghost{
-  background: transparent;
-  border:1px solid var(--border);
-  color: var(--text);
-  box-shadow:none;
-}
-.btn.ghost:hover{
-  background: var(--panel);
-}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.teal{background:var(--teal)} .btn.pink{background:var(--pink)} .btn.ghost{background:var(--paper)}
+.btn.small{font-size:12px;padding:8px 12px}
+.chip{display:inline-block;font-family:var(--pixel);font-size:11px;padding:3px 8px;border:2px solid var(--ink);background:var(--paper);color:var(--ink)}
+.chip.live{background:var(--teal)} .chip.dl{background:var(--blue)} .chip.wip{background:var(--pink)}
 
-.btn.small{
-  padding:9px 12px;
-  border-radius: 12px;
-  font-size: 14px;
-}
+/* ---------- hero ---------- */
+.hero{padding:70px 0 40px;position:relative}
+.hero h1{font-family:var(--pixel);font-size:clamp(64px,14vw,150px);line-height:.9;color:var(--amber);
+  text-shadow:6px 6px 0 var(--pink), 12px 12px 0 var(--ink);letter-spacing:2px}
+.hero .tag{font-size:clamp(20px,3vw,28px);font-weight:700;margin:22px 0 8px}
+.hero .tag s{color:var(--muted)}
+.hero p.sub{color:var(--muted);max-width:620px;font-size:18px}
+.hero .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:46px}
+.stat{background:var(--panel);border:2px solid var(--line);padding:14px 16px}
+.stat b{display:block;font-family:var(--pixel);font-size:22px;color:var(--teal)}
+.stat span{font-size:13px;color:var(--muted)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.tools .chip{transform:rotate(-2deg)} .tools .chip:nth-child(even){transform:rotate(2deg)}
 
-.icon{ font-family: var(--mono); opacity:0.9; }
+/* ---------- section headers ---------- */
+section{padding:60px 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+.sec-head h2{font-family:var(--pixel);font-size:clamp(30px,5vw,44px);color:var(--paper);text-shadow:4px 4px 0 var(--ink)}
+.sec-head h2 em{font-style:normal;color:var(--teal)}
+.sec-head p{color:var(--muted);max-width:460px}
 
-.hamburger{
-  display:none;
-  background:transparent;
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:10px;
-  cursor:pointer;
-}
-.hamburger span{
-  display:block;
-  width:18px;
-  height:2px;
-  background: var(--text);
-  margin:4px 0;
-  opacity:0.9;
-}
+/* ---------- filters ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.filters button{font-family:var(--pixel);font-size:12px;padding:8px 12px;background:var(--panel);color:var(--muted);border:2px solid var(--line);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--amber);color:var(--ink);border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
 
-.drawer{
-  position:fixed;
-  inset:0;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(6px);
-  display:none;
-  z-index:50;
+/* ---------- game cards ---------- */
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:30px}
+.game{
+  background:var(--paper);color:var(--ink);border:3px solid var(--ink);box-shadow:var(--shadow);
+  display:flex;flex-direction:column;transition:transform .15s, box-shadow .15s;
 }
-.drawer-inner{
-  position:absolute;
-  right:16px;
-  top:70px;
-  width:min(92vw, 360px);
-  background: color-mix(in oklab, var(--bg) 92%, transparent);
-  border:1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding:14px;
-}
-.drawer-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:10px;
-}
-.drawer-title{ font-weight:700; }
-.drawer-link{
-  display:block;
-  padding:12px 12px;
-  border-radius: 12px;
-  color: var(--muted);
-}
-.drawer-link:hover{
-  background: var(--panel);
-  color: var(--text);
-}
-.drawer-cta{ margin-top:10px; }
+.game:nth-child(odd){transform:rotate(-.8deg)} .game:nth-child(even){transform:rotate(.8deg)}
+.game:hover{transform:rotate(0) translateY(-6px);box-shadow:10px 12px 0 var(--ink)}
+.game .art{aspect-ratio:630/500;border-bottom:3px solid var(--ink);overflow:hidden;position:relative;background:var(--bg2)}
+.game .art img{width:100%;height:100%;object-fit:cover}
+.game .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.game h3{font-family:var(--pixel);font-size:20px;line-height:1.15}
+.game .pitch{font-size:15px}
+.game .joke{font-size:13px;color:#6b6385;font-style:italic}
+.game .meta{display:flex;gap:6px;flex-wrap:wrap}
+.game .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.game.hidden{display:none}
 
-main{ padding: 26px 18px 60px; }
-.hero{
-  max-width: 1100px;
-  margin: 18px auto 32px;
-  display:grid;
-  grid-template-columns: 1.25fr 0.75fr;
-  gap: 18px;
-  align-items: stretch;
-}
+/* featured */
+.featured{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);transform:none!important}
+.featured .art{aspect-ratio:auto;border-bottom:none;border-right:3px solid var(--ink);min-height:320px}
+.featured .art img{object-fit:cover}
+.featured .body{padding:26px 28px}
+.featured h3{font-size:clamp(26px,4vw,38px)}
+.featured .pitch{font-size:17px}
+.ribbon{position:absolute;top:14px;left:-6px;font-family:var(--pixel);font-size:12px;background:var(--amber);border:3px solid var(--ink);padding:4px 10px;box-shadow:3px 3px 0 var(--ink);z-index:2}
 
-.badge{
-  display:inline-flex;
-  gap:10px;
-  align-items:center;
-  padding:10px 12px;
-  border:1px solid var(--border);
-  background: var(--panel);
-  border-radius: 999px;
-  color: var(--muted);
-  width: fit-content;
-}
-.ping{
-  width:10px;height:10px;border-radius:999px;
-  background: var(--accent2);
-  box-shadow: 0 0 0 8px color-mix(in oklab, var(--accent2) 20%, transparent);
-  animation: pulse 1.6s ease-in-out infinite;
-}
-@keyframes pulse{
-  0%,100%{ transform: scale(1); opacity:0.9; }
-  50%{ transform: scale(1.12); opacity:0.65; }
-}
+/* css-drawn art: FatalCraft block wall */
+.blocks{position:absolute;inset:0;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(6,1fr)}
+.blocks i{background-size:cover;image-rendering:pixelated}
+.game .art img.steve,.game .art img.zombie{position:absolute;bottom:50%;height:30%;width:auto;max-width:none;object-fit:contain;z-index:1}
+.game .art img.steve{left:30%} .game .art img.zombie{left:68%;height:26%}
+.blocks .sky{background:#7cb6ff}
+/* Reset the Time clock */
+.clockart{position:absolute;inset:0;display:grid;place-items:center;background:
+  repeating-linear-gradient(0deg,#1d1b33 0 4px,#221f3d 4px 8px)}
+.clockart .lcd{font-family:var(--pixel);font-size:clamp(40px,7vw,64px);color:#ff5c5c;background:#0b0a14;border:4px solid #3a3560;padding:10px 22px;box-shadow:0 0 30px rgba(255,92,92,.35), 6px 6px 0 #000;text-shadow:0 0 10px rgba(255,92,92,.8)}
+.clockart small{position:absolute;bottom:14px;font-family:var(--pixel);font-size:12px;color:var(--muted)}
+/* Hnefatafl board */
+.boardart{position:absolute;inset:0;display:grid;place-items:center;background:#5a3418}
+.board{display:grid;grid-template-columns:repeat(9,1fr);width:62%;aspect-ratio:1;border:4px solid #2b170a;box-shadow:6px 6px 0 #000}
+.board span{border:1px solid #6b3f1d;background:#c08a52;display:grid;place-items:center}
+.board span:nth-child(odd){background:#b57d47}
+.board .k::after,.board .d::after,.board .a::after{content:"";width:62%;aspect-ratio:1;border-radius:50%;border:2px solid #000}
+.board .k::after{background:#ffd23a} .board .d::after{background:#f6f0e4} .board .a::after{background:#2b2b2b}
 
-.headline{
-  margin:14px 0 10px;
-  font-size: clamp(34px, 4vw, 54px);
-  line-height: 1.05;
-}
-.grad{
-  background: linear-gradient(135deg, #a78bfa, #38bdf8, #22c55e);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-.muted{ color: var(--muted); font-weight: 600; }
+/* ---------- repos ---------- */
+.repos{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.repo{background:var(--panel);border:2px solid var(--line);padding:18px 20px;text-decoration:none;display:flex;flex-direction:column;gap:8px;transition:border-color .12s, transform .12s}
+.repo:hover{border-color:var(--teal);transform:translateY(-3px)}
+.repo .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.repo h3{font-family:var(--pixel);font-size:16px;color:var(--amber);word-break:break-word}
+.repo p{color:var(--paper);font-size:15px}
+.repo .real{color:var(--muted);font-size:13px}
+.lang{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);white-space:nowrap}
+.lang::before{content:"";width:10px;height:10px;background:var(--c,#999);border:1px solid #000}
+.repo .go{font-family:var(--pixel);font-size:11px;color:var(--teal);margin-top:auto}
 
-.subhead{
-  margin: 10px 0 16px;
-  font-size: 16px;
-  color: var(--muted);
-  max-width: 64ch;
-}
+/* ---------- contact / footer ---------- */
+.contact{background:var(--amber);color:var(--ink);border:3px solid var(--ink);box-shadow:var(--shadow);padding:30px;display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center}
+.contact h2{font-family:var(--pixel);font-size:clamp(26px,4vw,36px);line-height:1.1}
+.contact p{margin-top:8px}
+.links{display:flex;flex-direction:column;gap:10px}
+.links a{display:flex;justify-content:space-between;gap:10px;background:var(--paper);border:3px solid var(--ink);padding:10px 14px;text-decoration:none;font-weight:700;box-shadow:3px 3px 0 var(--ink)}
+.links a span{font-family:var(--pixel);font-size:11px;color:#6b6385;font-weight:400}
+.links a:hover{background:#fff}
+footer{padding:40px 0 60px;color:var(--muted);font-size:14px;text-align:center}
+footer .pix{font-family:var(--pixel);color:var(--paper)}
 
-.hero-cta{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom: 12px;
-}
-.quick-links{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.pill{
-  border:1px solid var(--border);
-  background: var(--panel);
-  color: var(--text);
-  padding:10px 12px;
-  border-radius: 999px;
-  transition: transform 0.15s ease, background 0.15s ease;
-}
-.pill:hover{ transform: translateY(-1px); background: var(--panel2); }
+/* ---------- player overlay ---------- */
+.player{position:fixed;inset:0;z-index:100;background:rgba(5,4,12,.92);display:none;flex-direction:column}
+.player.open{display:flex}
+.player .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:var(--bg2);border-bottom:2px solid var(--line)}
+.player .bar b{font-family:var(--pixel);color:var(--amber)}
+.player .bar .hint{color:var(--muted);font-size:13px;flex:1;text-align:center}
+.player iframe{flex:1;width:100%;border:0;background:#000}
+.player .loading{position:absolute;inset:60px 0 0;display:grid;place-items:center;pointer-events:none;font-family:var(--pixel);color:var(--muted);text-align:center;padding:20px}
 
-.profile-card{
-  height:100%;
-  border:1px solid var(--border);
-  background: color-mix(in oklab, var(--panel) 95%, transparent);
-  border-radius: var(--radius2);
-  box-shadow: var(--shadow);
-  padding: 16px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-.profile-top{
-  display:flex;
-  gap:12px;
-  align-items:center;
-}
-.avatar{
-  width:64px;height:64px;border-radius: 18px;
-  border:1px solid var(--border);
-  background: var(--panel);
-  object-fit:cover;
-}
-.name-row{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-.name{ font-weight:800; font-size: 18px; }
-.handle{ color: var(--muted); font-family: var(--mono); font-size: 13px; margin-top:2px; }
-.chip{
-  font-size: 12px;
-  color: var(--muted);
-  border:1px solid var(--border);
-  padding:6px 10px;
-  border-radius: 999px;
-  background: var(--panel);
-}
+/* ---------- achievement toast ---------- */
+.toast{position:fixed;right:20px;bottom:20px;z-index:90;display:flex;gap:12px;align-items:center;background:var(--panel);border:3px solid var(--ink);box-shadow:var(--shadow);padding:12px 16px;max-width:320px;transform:translateY(160%);transition:transform .35s cubic-bezier(.2,1.4,.4,1)}
+.toast.show{transform:none}
+.toast .trophy{font-size:28px}
+.toast b{font-family:var(--pixel);font-size:12px;color:var(--amber);display:block}
+.toast span{font-size:14px}
 
-.stats{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:10px;
+/* ---------- responsive ---------- */
+@media (max-width:820px){
+  .featured{grid-template-columns:1fr}
+  .featured .art{border-right:none;border-bottom:3px solid var(--ink);min-height:0;aspect-ratio:1}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .contact{grid-template-columns:1fr}
 }
-.stat{
-  border:1px solid var(--border);
-  background: var(--panel);
-  border-radius: 16px;
-  padding: 12px;
+@media (max-width:560px){
+  nav ul a{font-size:11px;padding:6px}
+  .wrap{padding:0 16px}
+  .games{grid-template-columns:1fr}
+  .repos{grid-template-columns:1fr}
+  .player .bar .hint{display:none}
 }
-.stat-num{ font-weight: 800; font-size: 18px; }
-.stat-label{ color: var(--muted); font-size: 12px; margin-top:4px; }
-
-.profile-actions{
-  display:flex;
-  gap:10px;
-}
-.mini-note{
-  margin-top:auto;
-  color: var(--muted);
-  display:flex;
-  gap:8px;
-  align-items:center;
-  border-top:1px solid var(--border);
-  padding-top:12px;
-}
-.spark{ color: #a78bfa; }
-
-.section{
-  max-width: 1100px;
-  margin: 34px auto;
-}
-.section-head h2{
-  margin:0;
-  font-size: 26px;
-}
-.section-head p{
-  margin: 8px 0 0;
-  color: var(--muted);
-  max-width: 80ch;
-}
-
-.toolbar{
-  margin-top: 14px;
-  display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-.search-wrap{ flex: 1; min-width: 220px; }
-.search{
-  width:100%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border:1px solid var(--border);
-  background: var(--panel);
-  color: var(--text);
-  outline:none;
-}
-.search::placeholder{ color: color-mix(in oklab, var(--muted) 85%, transparent); }
-.select{
-  padding: 12px 12px;
-  border-radius: 14px;
-  border:1px solid var(--border);
-  background: var(--panel);
-  color: var(--text);
-  outline:none;
-}
-
-.grid{
-  margin-top: 14px;
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-
-.card{
-  border:1px solid var(--border);
-  background: var(--panel);
-  border-radius: var(--radius2);
-  padding: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
-  display:flex;
-  flex-direction:column;
-  min-height: 220px;
-  position:relative;
-  overflow:hidden;
-}
-.card::before{
-  content:"";
-  position:absolute;
-  inset:-120px -120px auto auto;
-  width:220px;height:220px;border-radius:999px;
-  background: radial-gradient(circle at 30% 30%, rgba(124,58,237,0.24), transparent 60%);
-  filter: blur(2px);
-  pointer-events:none;
-}
-.card:hover{
-  transform: translateY(-3px);
-  background: var(--panel2);
-  border-color: color-mix(in oklab, var(--accent) 30%, var(--border));
-}
-.card-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
-}
-.card-title{
-  font-weight:800;
-  letter-spacing:0.2px;
-}
-.card-desc{
-  margin: 8px 0 12px;
-  color: var(--muted);
-  line-height: 1.4;
-  min-height: 3.4em;
-}
-.tags{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:auto;
-}
-.tag{
-  font-size: 12px;
-  color: var(--muted);
-  border:1px solid var(--border);
-  background: color-mix(in oklab, var(--panel) 92%, transparent);
-  padding:6px 10px;
-  border-radius: 999px;
-  font-family: var(--mono);
-}
-.meta{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 10px;
-}
-.meta span{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  border:1px solid var(--border);
-  background: color-mix(in oklab, var(--panel) 90%, transparent);
-  padding:6px 10px;
-  border-radius: 999px;
-  font-family: var(--mono);
-}
-
-.center{ display:flex; justify-content:center; margin-top: 16px; }
-
-.skills{
-  margin-top: 14px;
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-.skill-card{
-  border:1px solid var(--border);
-  background: var(--panel);
-  border-radius: var(--radius2);
-  padding: 16px;
-}
-.skill-card h3{ margin:0 0 10px; }
-.skill-card ul{ margin:0; padding-left: 18px; color: var(--muted); }
-.skill-card li{ margin: 6px 0; }
-
-.about{
-  margin-top:14px;
-  display:grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-.about-card{
-  border:1px solid var(--border);
-  background: var(--panel);
-  border-radius: var(--radius2);
-  padding: 16px;
-  color: var(--muted);
-}
-.about-card h3{ margin:0 0 10px; color: var(--text); }
-
-.contact{
-  margin-top:14px;
-  display:grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 14px;
-}
-.contact-card{
-  border:1px solid var(--border);
-  background: var(--panel);
-  border-radius: var(--radius2);
-  padding: 16px;
-}
-.contact-card h3{ margin:0 0 8px; }
-.contact-card p{ margin:0; color: var(--muted); line-height:1.5; }
-.contact-actions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
-.mono{ font-family: var(--mono); }
-
-.contact-form{
-  border:1px solid var(--border);
-  background: var(--panel);
-  border-radius: var(--radius2);
-  padding: 16px;
-  display:flex;
-  flex-direction:column;
-  gap: 10px;
-}
-label{ display:flex; flex-direction:column; gap:8px; color: var(--muted); font-size: 13px; }
-input, textarea{
-  width:100%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border:1px solid var(--border);
-  background: color-mix(in oklab, var(--panel) 92%, transparent);
-  color: var(--text);
-  outline:none;
-  font-family: inherit;
-}
-textarea{ resize: vertical; }
-.hint{ margin: 4px 0 0; color: var(--muted); font-size: 12px; }
-
-.footer{
-  max-width: 1100px;
-  margin: 34px auto 0;
-  padding-top: 18px;
-  border-top:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  color: var(--muted);
-}
-.to-top{ color: var(--muted); }
-.to-top:hover{ color: var(--text); }
-
-@media (max-width: 980px){
-  .hero{ grid-template-columns: 1fr; }
-  .grid{ grid-template-columns: repeat(2, 1fr); }
-  .skills{ grid-template-columns: 1fr; }
-  .about{ grid-template-columns: 1fr; }
-  .contact{ grid-template-columns: 1fr; }
-}
-@media (max-width: 760px){
-  .nav-links, .nav-actions{ display:none; }
-  .hamburger{ display:block; }
-  .grid{ grid-template-columns: 1fr; }
-}
-
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
 </style>
-
+</head>
 <body>
-  <!-- Background glow -->
-  <div class="bg-glow" aria-hidden="true"></div>
 
-  <!-- Top nav -->
-  <header class="nav">
-    <a class="brand" href="#top" aria-label="Go to top">
-      <span class="brand-dot"></span>
-      <span>Prathyay</span>
-    </a>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top">FATAL</a>
+    <ul>
+      <li><a href="#games">Games</a></li>
+      <li><a href="#repos">Repos</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
 
-    <nav class="nav-links" aria-label="Primary">
-      <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-    </nav>
+<header class="hero wrap" id="top">
+  <h1>FATAL</h1>
+  <p class="tag">I make 2D games. <s>All</s> Some of them work.</p>
+  <p class="sub">Hi, I'm Prathyay. I build games in Python, Pygame and Godot, mostly non-violent, occasionally educational, always one bug away from greatness.</p>
+  <div class="cta">
+    <a class="btn" href="#games">▶ Play something</a>
+    <button class="btn teal" id="lucky" type="button">🎲 I'm feeling lucky</button>
+    <a class="btn ghost" href="#repos">Read my code (brave)</a>
+  </div>
+  <div class="tools">
+    <span class="chip">Python</span><span class="chip">Pygame</span><span class="chip">Godot</span><span class="chip">GitHub</span><span class="chip">C (against my will)</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>6</b><span>games released into the wild</span></div>
+    <div class="stat"><b>1</b><span>playable right here, no download</span></div>
+    <div class="stat"><b>0</b><span>violence (it's a whole thing)</span></div>
+    <div class="stat"><b>∞</b><span>bugs, lovingly hand-crafted</span></div>
+  </div>
+</header>
 
-    <div class="nav-actions">
-      <button id="themeBtn" class="btn ghost" type="button" aria-label="Toggle theme">
-        <span class="icon">◐</span>
-      </button>
-      <a class="btn" id="githubBtn" href="https://github.com/PrathyayPGM-ALT" target="_blank" rel="noreferrer">
-        GitHub
+<main>
+<section id="games">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>The <em>Games</em></h2>
+      <p>Like itch.io, but with less glue and more me. Hit play where it says play; everything else downloads from itch.</p>
+    </div>
+
+    <div class="filters" role="group" aria-label="Filter games">
+      <button type="button" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" data-filter="browser" aria-pressed="false">Plays in browser</button>
+      <button type="button" data-filter="puzzle" aria-pressed="false">Puzzle</button>
+      <button type="button" data-filter="adventure" aria-pressed="false">Adventure</button>
+      <button type="button" data-filter="history" aria-pressed="false">History</button>
+    </div>
+
+    <div class="games">
+
+      <!-- FEATURED -->
+      <article class="game featured" data-tags="puzzle browser">
+        <div class="art">
+          <span class="ribbon">★ Main quest</span>
+          <img src="assets/img/ttd.png" alt="Prisoner 7, a faceless hooded figure in front of a broken clock" loading="lazy">
+        </div>
+        <div class="body">
+          <h3>Time Traveller's Dilemma</h3>
+          <div class="meta"><span class="chip live">Browser</span><span class="chip">Windows</span><span class="chip">macOS</span><span class="chip">Puzzle</span></div>
+          <p class="pitch">The year is 4200. You wake up in a borrowed body, a faceless voice calls you <b>Prisoner 7</b>, and your boss has a job for you. Do it, or don't. Time is very much up for negotiation.</p>
+          <p class="joke">Warning: changing the past may cause the problems you're trying to fix. Ask any time traveller. Actually, don't.</p>
+          <div class="actions">
+            <a class="btn" href="https://fatal-prathyaym.itch.io/time-travellers-dillemma" target="_blank" rel="noopener">▶ Play in browser</a>
+            <a class="btn ghost small" href="https://fatal-prathyaym.itch.io/time-travellers-dillemma" target="_blank" rel="noopener">Download</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- FATALCRAFT -->
+      <article class="game" data-tags="adventure browser">
+        <div class="art">
+          <span class="ribbon" style="background:var(--teal)">Plays right here</span>
+          <div class="blocks" id="fc-art" aria-hidden="true"></div>
+        </div>
+        <div class="body">
+          <h3>FatalCraft</h3>
+          <div class="meta"><span class="chip live">Plays here</span><span class="chip">Pygame</span><span class="chip">Sandbox</span></div>
+          <p class="pitch">Minecraft, but I removed a whole dimension. Mine, craft, build, and get bullied by zombies in glorious 2D.</p>
+          <p class="joke">Mojang, if you're reading this: it's a tribute. Please don't.</p>
+          <div class="actions">
+            <button class="btn teal" type="button" data-play="play/fatalcraft/index.html" data-title="FatalCraft" data-hint="A/D move · W/Space jump · click to mine · right-click to place · E crafting · 1-9 hotbar">▶ Play now</button>
+            <a class="btn ghost small" href="https://github.com/PrathyayPGM-ALT/Minecraft-but-2D" target="_blank" rel="noopener">Source</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- WARD ROUNDS -->
+      <article class="game" data-tags="history">
+        <div class="art"><img src="assets/img/ward-rounds.png" alt="Ward Rounds 1944: a pixel-art army hospital ward" loading="lazy"></div>
+        <div class="body">
+          <h3>Ward Rounds 1944</h3>
+          <div class="meta"><span class="chip dl">Windows</span><span class="chip">RPG</span><span class="chip">WW2</span></div>
+          <p class="pitch">D-Day, 1944. You're a nurse in an army hospital. Read the charts, spot the symptoms, and stretch a tiny pile of penicillin, plasma and bandages across a whole ward.</p>
+          <p class="joke">Zero guns. Maximum stress. Tribute to the people who did this for real.</p>
+          <div class="actions">
+            <a class="btn" href="https://fatal-prathyaym.itch.io/a-farewell-to-arms" target="_blank" rel="noopener">⬇ Get it on itch</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- NOBLE DECAY -->
+      <article class="game" data-tags="puzzle">
+        <div class="art"><img src="assets/img/noble-decay.png" alt="Noble Decay: periodic-table tiles falling into a Tetris well" loading="lazy"></div>
+        <div class="body">
+          <h3>Noble Decay</h3>
+          <div class="meta"><span class="chip dl">Windows</span><span class="chip">Puzzle</span><span class="chip">Chemistry</span></div>
+          <p class="pitch">Tetris, but nerdy. Elements fall, and instead of clearing lines you <b>react</b> them until there's nothing left. Na + Cl = gone.</p>
+          <p class="joke">Requires 10th-grade chemistry. If you skipped it: this is your sign.</p>
+          <div class="actions">
+            <a class="btn" href="https://fatal-prathyaym.itch.io/noble-decay" target="_blank" rel="noopener">⬇ Get it on itch</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- RESET THE TIME -->
+      <article class="game" data-tags="puzzle">
+        <div class="art">
+          <div class="clockart" aria-hidden="true"><div class="lcd" id="lcd">00:10</div><small>physics has left the chat</small></div>
+        </div>
+        <div class="body">
+          <h3>Reset The Time</h3>
+          <div class="meta"><span class="chip dl">Download</span><span class="chip">Puzzle</span></div>
+          <p class="pitch">A countdown clock is ticking. Your job: change the seconds by ignoring physics and creating time out of thin air.</p>
+          <p class="joke">Einstein would have questions. I don't have answers.</p>
+          <div class="actions">
+            <a class="btn" href="https://fatal-prathyaym.itch.io/reset-the-time" target="_blank" rel="noopener">⬇ Get it on itch</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- HNEFATAFL -->
+      <article class="game" data-tags="history">
+        <div class="art">
+          <span class="ribbon" style="background:var(--pink)">Work in progress</span>
+          <div class="boardart" aria-hidden="true"><div class="board" id="board"></div></div>
+        </div>
+        <div class="body">
+          <h3>Hnefatafl</h3>
+          <div class="meta"><span class="chip wip">WIP</span><span class="chip">Pygame</span><span class="chip">Multiplayer</span></div>
+          <p class="pitch">A Viking board game from a thousand years ago: get the king to a corner before the attackers box him in. Pass-and-play or online.</p>
+          <p class="joke">It's pronounced however you want. It is NOT falafel.</p>
+          <div class="actions">
+            <a class="btn ghost" href="https://github.com/PrathyayPGM-ALT/Hnefatafl" target="_blank" rel="noopener">Source on GitHub</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section id="repos">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Repos <em>(evidence)</em></h2>
+      <p>The code behind the chaos. Read at your own risk; comments may contain feelings.</p>
+    </div>
+    <div class="repos">
+      <a class="repo" href="https://github.com/PrathyayPGM-ALT/Cyvathon-Official-Website" target="_blank" rel="noopener">
+        <div class="top"><h3>Cyvathon-Official-Website</h3><span class="lang" style="--c:#3572A5">Python · JS</span></div>
+        <p>I made a micronation. It has a website, a chat, and its own bank. As one does.</p>
+        <p class="real">Official site + Cybucks banking system for Cyvathon.</p>
+        <span class="go">→ view repo</span>
+      </a>
+      <a class="repo" href="https://github.com/PrathyayPGM-ALT/EncrypterDecrypter" target="_blank" rel="noopener">
+        <div class="top"><h3>EncrypterDecrypter</h3><span class="lang" style="--c:#3572A5">Python</span></div>
+        <p>Your secrets, safer than my sleep schedule.</p>
+        <p class="real">AES-256-GCM + PBKDF2 text encryption with a Tkinter GUI.</p>
+        <span class="go">→ view repo</span>
+      </a>
+      <a class="repo" href="https://github.com/PrathyayPGM-ALT/Minecraft-but-2D" target="_blank" rel="noopener">
+        <div class="top"><h3>Minecraft-but-2D</h3><span class="lang" style="--c:#3572A5">Python</span></div>
+        <p>The source of FatalCraft. Yes, the one you can play up there.</p>
+        <p class="real">2D Minecraft-style sandbox built from scratch in Pygame.</p>
+        <span class="go">→ view repo</span>
+      </a>
+      <a class="repo" href="https://github.com/PrathyayPGM-ALT/Hnefatafl" target="_blank" rel="noopener">
+        <div class="top"><h3>Hnefatafl</h3><span class="lang" style="--c:#3572A5">Python</span></div>
+        <p>Vikings, but make it networked.</p>
+        <p class="real">Viking board game with local pass-and-play and a relay server.</p>
+        <span class="go">→ view repo</span>
+      </a>
+      <a class="repo" href="https://github.com/PrathyayPGM-ALT/learnin-and-earnin-C" target="_blank" rel="noopener">
+        <div class="top"><h3>learnin-and-earnin-C</h3><span class="lang" style="--c:#555555">C</span></div>
+        <p>My emotional damage, documented. Includes a file called ARRRRRGHGHGHHG.c, for science.</p>
+        <p class="real">Learning C, cursed edition.</p>
+        <span class="go">→ view repo</span>
+      </a>
+      <a class="repo" href="https://github.com/PrathyayPGM-ALT?tab=repositories" target="_blank" rel="noopener">
+        <div class="top"><h3>Everything else</h3><span class="lang" style="--c:#ffc430">GitHub</span></div>
+        <p>The full archive, including experiments I'm still emotionally processing.</p>
+        <p class="real">All public repos on GitHub.</p>
+        <span class="go">→ see all repos</span>
       </a>
     </div>
+  </div>
+</section>
 
-    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </header>
-
-  <!-- Mobile drawer -->
-  <aside class="drawer" id="drawer" aria-hidden="true">
-    <div class="drawer-inner">
-      <div class="drawer-top">
-        <div class="drawer-title">Menu</div>
-        <button class="btn ghost" id="closeDrawer" type="button" aria-label="Close menu">✕</button>
+<section id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <div>
+        <h2>Found a bug? Want to collab? Just want to say hi?</h2>
+        <p>All three are welcome. The first one is very welcome. I have a lot of them.</p>
       </div>
-      <a href="#projects" class="drawer-link">Projects</a>
-      <a href="#skills" class="drawer-link">Skills</a>
-      <a href="#about" class="drawer-link">About</a>
-      <a href="#contact" class="drawer-link">Contact</a>
-
-      <div class="drawer-cta">
-        <a class="btn" href="https://github.com/PrathyayPGM-ALT" target="_blank" rel="noreferrer">Open GitHub</a>
+      <div class="links">
+        <a href="mailto:prathyaym@gmail.com">prathyaym@gmail.com <span>email</span></a>
+        <a href="https://fatal-prathyaym.itch.io" target="_blank" rel="noopener">fatal-prathyaym <span>itch.io</span></a>
+        <a href="https://github.com/PrathyayPGM-ALT" target="_blank" rel="noopener">PrathyayPGM-ALT <span>github</span></a>
+        <a href="#" id="discord">fatal_prathyaym <span>discord · click to copy</span></a>
       </div>
     </div>
-  </aside>
+  </div>
+</section>
+</main>
 
-  <main id="top">
-    <!-- Hero -->
-    <section class="hero">
-      <div class="hero-left">
-        <div class="badge" id="statusBadge">
-          <span class="ping"></span>
-          <span>Building games. Breaking things (legally).</span>
-        </div>
+<footer>
+  <p class="pix">© Fatal · built with HTML, CSS and unreasonable confidence</p>
+  <p>No cookies on this site. Not even the edible kind.</p>
+</footer>
 
-        <h1 class="headline">
-          <span class="grad">Prathyay</span><br/>
-          <span class="muted">Game Developer • Ethical Hacker • Programmer</span><br/>
-          <span class="muted">Professional Chaos Creator</span>
-        </h1>
+<!-- in-site game player -->
+<div class="player" id="player" role="dialog" aria-modal="true" aria-label="Game player">
+  <div class="bar">
+    <b id="player-title">Game</b>
+    <span class="hint" id="player-hint"></span>
+    <button class="btn pink small" type="button" id="player-close">✕ Close</button>
+  </div>
+  <div class="loading" id="player-loading">Loading Python into your browser…<br><br>first time takes a bit. go make a sandwich.</div>
+  <iframe id="player-frame" title="Game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+</div>
 
-        <p class="subhead" id="bioLine">
-          Loading GitHub profile…
-        </p>
-
-        <div class="hero-cta">
-          <a class="btn" href="#projects">View Projects</a>
-          <a class="btn ghost" href="#contact">Contact Me</a>
-        </div>
-
-        <div class="quick-links">
-          <a class="pill" id="siteLink" href="https://prathyay.neocities.org/" target="_blank" rel="noreferrer">Website</a>
-          <a class="pill" id="itchLink" href="https://fatal-prathyaym.itch.io/" target="_blank" rel="noreferrer">Itch.io</a>
-          <a class="pill" id="cyvLink" href="https://cyvathon.onrender.com/" target="_blank" rel="noreferrer">Cyvathon</a>
-        </div>
-      </div>
-
-      <div class="hero-right">
-        <div class="profile-card">
-          <div class="profile-top">
-            <img id="avatar" class="avatar" alt="Prathyay avatar" />
-            <div class="profile-meta">
-              <div class="name-row">
-                <div class="name" id="name">Prathyay</div>
-                <span class="chip" id="locationChip">India</span>
-              </div>
-              <div class="handle" id="handle">@PrathyayPGM-ALT</div>
-            </div>
-          </div>
-
-          <div class="stats">
-            <div class="stat">
-              <div class="stat-num" id="repoCount">—</div>
-              <div class="stat-label">Repos</div>
-            </div>
-            <div class="stat">
-              <div class="stat-num" id="followers">—</div>
-              <div class="stat-label">Followers</div>
-            </div>
-            <div class="stat">
-              <div class="stat-num" id="following">—</div>
-              <div class="stat-label">Following</div>
-            </div>
-          </div>
-
-          <div class="profile-actions">
-            <a class="btn small" id="emailBtn" href="mailto:prathyaym@gmail.com">Email</a>
-            <a class="btn small ghost" id="resumeBtn" href="#" onclick="return false;">Resume (add later)</a>
-          </div>
-
-          <div class="mini-note">
-            <span class="spark">✦</span>
-            <span>Auto-powered by GitHub API. No hardcoded fake flex.</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Projects -->
-    <section class="section" id="projects">
-      <div class="section-head">
-        <h2>Featured Projects</h2>
-        <p>
-          These are my pinned / best projects
-        </p>
-      </div>
-
-      <div class="toolbar">
-        <div class="search-wrap">
-          <input id="search" class="search" type="search" placeholder="Search projects (name, description, language)..." />
-        </div>
-        <select id="sort" class="select" aria-label="Sort projects">
-          <option value="pinned">Pinned order</option>
-          <option value="stars">Most stars</option>
-          <option value="updated">Recently updated</option>
-          <option value="name">Name A → Z</option>
-        </select>
-      </div>
-<!--bruv-->
-      <div class="grid" id="projectsGrid" aria-live="polite">
-        <!-- cards injected here -->
-      </div>
-
-      <div class="center">
-        <a class="btn ghost" href="https://github.com/PrathyayPGM-ALT?tab=repositories" target="_blank" rel="noreferrer">
-          See all repos
-        </a>
-      </div>
-    </section>
-
-    <!-- Skills -->
-    <section class="section" id="skills">
-      <div class="section-head">
-        <h2>Skills</h2>
-        <p>What I use to build worlds, tools, and chaos.</p>
-      </div>
-
-      <div class="skills">
-        <div class="skill-card">
-          <h3>Game Dev</h3>
-          <ul>
-            <li>Python (Pygame)</li>
-            <li>Gameplay systems, UI, inventory</li>
-            <li>Optimization + polish</li>
-            <li> Am also comfortable with un-game like problems</li>li
-          </ul>
-        </div>
-        <div class="skill-card">
-          <h3>Security</h3>
-          <ul>
-            <li>"Ethical" hacking mindset</li>
-            <li>Encryption / hashing</li>
-            <li>Building safe-by-design tools</li>
-          </ul>
-        </div>
-        <div class="skill-card">
-          <h3>Web</h3>
-          <ul>
-            <li>HTML / CSS / JavaScript</li>
-            <li>Clean UI + responsive design</li>
-            <li>Deployments (GitHub Pages and Render)</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- About -->
-    <section class="section" id="about">
-      <div class="section-head">
-        <h2>About</h2>
-        <p id="aboutText">
-          “What if…?” and then things get out of hand.
-        </p>
-      </div>
-
-      <div class="about">
-        <div class="about-card">
-          <h3>What I do</h3>
-          <p>
-            I build games, systems, and tools. I like projects that feel alive:
-            crafting, combat, multiplayer ideas, and anything that makes players go “wait… what?”.
-          </p>
-        </div>
-        <div class="about-card">
-          <h3>What I am aiming for</h3>
-          <p>
-            Bigger releases. Cleaner code. Cooler mechanics. More open source.
-            Less “it works on my machine” (maybe). Am also looking forward to make the world a better place through my code.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section class="section" id="contact">
-      <div class="section-head">
-        <h2>Contact</h2>
-        <p>Want to collab, test a build, or hire me? Send a message.</p>
-      </div>
-
-      <div class="contact">
-        <div class="contact-card">
-          <h3>Direct</h3>
-          <p>
-            Email: <a href="mailto:prathyaym@gmail.com">prathyaym@gmail.com</a><br/>
-            Discord: <span class="mono">fatal_prathyaym</span>
-          </p>
-          <div class="contact-actions">
-            <a class="btn" href="mailto:prathyaym@gmail.com?subject=Portfolio%20Contact&body=Yo%20Prathyay%2C%0A%0A">Email Me</a>
-            <a class="btn ghost" href="https://github.com/PrathyayPGM-ALT" target="_blank" rel="noreferrer">GitHub</a>
-          </div>
-        </div>
-
-        <form class="contact-form" id="contactForm">
-          <label>
-            Your name
-            <input required name="name" type="text" placeholder="Your name" />
-          </label>
-          <label>
-            Your email
-            <input required name="email" type="email" placeholder="you@example.com" />
-          </label>
-          <label>
-            Message
-            <textarea required name="message" rows="5" placeholder="Tell me what you are building..."></textarea>
-          </label>
-
-          <button class="btn" type="submit">Generate Email Draft</button>
-          <p class="hint" id="formHint">
-            This does not send anything automatically. It creates a mailto draft on your device.
-          </p>
-        </form>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div>© <span id="year"></span> Prathyay • Built with HTML/CSS/JS</div>
-      <a href="#top" class="to-top">Back to top ↑</a>
-    </footer>
-  </main>
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <div class="trophy">🏆</div>
+  <div><b id="toast-title">Achievement unlocked</b><span id="toast-text">Visited Fatal's website</span></div>
+</div>
 
 <script>
-/* =========================================================
-   CONFIG
-========================================================= */
-const USERNAME = "PrathyayPGM-ALT";
+// ---------- FatalCraft card art from the game's own textures ----------
+(function(){
+  const art = document.getElementById("fc-art");
+  const rows = [
+    "ssssssss",
+    "ssssssss",
+    "llsssssw",
+    "gggggggg",
+    "dddddcdd",
+    "ttdtttxt",
+  ];
+  const tex = {g:"grass",d:"dirt",t:"stone",c:"coal",x:"diamond",l:"leaves",w:"wood"};
+  rows.forEach(r => [...r].forEach(ch => {
+    const i = document.createElement("i");
+    if (ch === "s") i.className = "sky";
+    else i.style.backgroundImage = `url(assets/tex/${tex[ch]}.png)`;
+    art.appendChild(i);
+  }));
+  const steve = new Image(); steve.src = "assets/tex/steve.png"; steve.className = "steve"; steve.alt = "";
+  const zombie = new Image(); zombie.src = "assets/tex/zombie.png"; zombie.className = "zombie"; zombie.alt = "";
+  art.parentElement.append(steve, zombie);
+})();
 
-const FEATURED_REPOS = [
-  "Hnefatafl",
-  "EncrypterDecrypter",
-  "Minecraft-but-2D",
-  "Cyvathon-Official-Website",
-  "HackingSimulator",
-  "learnin-and-earnin-C",
-];
-
-/* =========================================================
-   HELPERS
-========================================================= */
-const $ = (s) => document.querySelector(s);
-
-const normalize = (s) => (s ?? "").toLowerCase().trim();
-
-const formatDate = (iso) =>
-  new Date(iso).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-  });
-
-/* =========================================================
-   GITHUB API (DIRECT – GitHub Pages SAFE)
-========================================================= */
-async function gh(url) {
-  const res = await fetch(url, {
-    headers: {
-      "Accept": "application/vnd.github+json"
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error(`GitHub API error ${res.status}`);
-  }
-
-  return res.json();
-}
-
-/* =========================================================
-   PROFILE
-========================================================= */
-async function loadProfile() {
-  const d = await gh(`https://api.github.com/users/${USERNAME}`);
-
-  $("#avatar").src = d.avatar_url;
-  $("#name").textContent = d.name || "Prathyay";
-  $("#handle").textContent = `@${d.login}`;
-  $("#locationChip").textContent = d.location || "India";
-
-  $("#repoCount").textContent = d.public_repos;
-  $("#followers").textContent = d.followers;
-  $("#following").textContent = d.following;
-
-  const bio =
-    d.bio || "Game developer. Ethical hacker. Professional chaos creator.";
-
-  $("#bioLine").textContent = bio;
-  $("#aboutText").textContent = bio;
-
-  if (d.blog) {
-    $("#siteLink").href = d.blog.startsWith("http")
-      ? d.blog
-      : `https://${d.blog}`;
-  }
-}
-
-/* =========================================================
-   PROJECTS
-========================================================= */
-let reposCache = [];
-const pinnedOrder = new Map(
-  FEATURED_REPOS.map((name, i) => [name.toLowerCase(), i])
-);
-
-function projectCard(r) {
-  return `
-    <a class="card" href="${r.html_url}" target="_blank" rel="noreferrer">
-      <div class="card-top">
-        <div class="card-title">${r.name}</div>
-        <div class="chip">${r.language || "Mixed"}</div>
-      </div>
-
-      <div class="card-desc">
-        ${r.description || "No description yet. Still cooking."}
-      </div>
-
-      <div class="tags">
-        <span class="tag">#featured</span>
-      </div>
-
-      <div class="meta">
-        <span>★ ${r.stargazers_count}</span>
-        <span>⑂ ${r.forks_count}</span>
-        <span>⟳ ${formatDate(r.updated_at)}</span>
-      </div>
-    </a>
-  `;
-}
-
-function renderProjects(list) {
-  $("#projectsGrid").innerHTML = list.map(projectCard).join("");
-}
-
-function applyFilterAndSort() {
-  const q = normalize($("#search").value);
-  const sort = $("#sort").value;
-
-  let list = reposCache.filter((r) =>
-    `${normalize(r.name)} ${normalize(r.description)} ${normalize(r.language)}`
-      .includes(q)
-  );
-
-  if (sort === "pinned") {
-    list.sort(
-      (a, b) =>
-        (pinnedOrder.get(a.name.toLowerCase()) ?? 999) -
-        (pinnedOrder.get(b.name.toLowerCase()) ?? 999)
-    );
-  } else if (sort === "stars") {
-    list.sort((a, b) => b.stargazers_count - a.stargazers_count);
-  } else if (sort === "updated") {
-    list.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-  } else {
-    list.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  renderProjects(list);
-}
-
-async function loadFeaturedProjects() {
-  const allRepos = await gh(
-    `https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=updated`
-  );
-
-  const wanted = new Set(FEATURED_REPOS.map((r) => r.toLowerCase()));
-  reposCache = allRepos.filter((r) =>
-    wanted.has(r.name.toLowerCase())
-  );
-
-  applyFilterAndSort();
-}
-
-/* =========================================================
-   INIT
-========================================================= */
-(async function initGitHub() {
-  try {
-    await loadProfile();
-    await loadFeaturedProjects();
-
-    $("#search").addEventListener("input", applyFilterAndSort);
-    $("#sort").addEventListener("change", applyFilterAndSort);
-  } catch (err) {
-    console.error(err);
-    $("#projectsGrid").innerHTML = `
-      <div class="card" style="grid-column:1/-1">
-        <div class="card-title">Failed to load projects</div>
-        <div class="card-desc">
-          GitHub API rate limit or network issue. Try again later.
-        </div>
-      </div>
-    `;
+// ---------- Hnefatafl board ----------
+(function(){
+  const b = document.getElementById("board");
+  const A = new Set(["0,3","0,4","0,5","1,4","8,3","8,4","8,5","7,4","3,0","4,0","5,0","4,1","3,8","4,8","5,8","4,7"]);
+  const D = new Set(["2,4","3,4","5,4","6,4","4,2","4,3","4,5","4,6"]);
+  for (let r=0;r<9;r++) for (let c=0;c<9;c++){
+    const s = document.createElement("span"); const k = r+","+c;
+    if (r===4 && c===4) s.className="k"; else if (D.has(k)) s.className="d"; else if (A.has(k)) s.className="a";
+    b.appendChild(s);
   }
 })();
+
+// ---------- Reset The Time: a clock that refuses to count properly ----------
+(function(){
+  const lcd = document.getElementById("lcd"); let t = 10;
+  setInterval(() => {
+    t = t <= 0 ? 10 : t - 1;
+    if (Math.random() < 0.18) t += 3;          // physics has left the chat
+    lcd.textContent = "00:" + String(t).padStart(2,"0");
+  }, 1000);
+})();
+
+// ---------- filters ----------
+const filterBtns = document.querySelectorAll(".filters button");
+filterBtns.forEach(btn => btn.addEventListener("click", () => {
+  filterBtns.forEach(b => b.setAttribute("aria-pressed", b === btn));
+  const f = btn.dataset.filter;
+  document.querySelectorAll(".game").forEach(g => {
+    g.classList.toggle("hidden", f !== "all" && !g.dataset.tags.split(" ").includes(f));
+  });
+}));
+
+// ---------- toast ----------
+const toast = document.getElementById("toast");
+let toastTimer;
+function achieve(title, text){
+  document.getElementById("toast-title").textContent = title;
+  document.getElementById("toast-text").textContent = text;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 3600);
+}
+setTimeout(() => achieve("Achievement unlocked", "Visited Fatal's website. Bold move."), 1200);
+
+// ---------- in-site player ----------
+const player = document.getElementById("player");
+const frame = document.getElementById("player-frame");
+const loading = document.getElementById("player-loading");
+function openPlayer(src, title, hint){
+  document.getElementById("player-title").textContent = title;
+  document.getElementById("player-hint").textContent = hint || "";
+  loading.style.display = "grid";
+  frame.src = src;
+  player.classList.add("open");
+  document.body.style.overflow = "hidden";
+  achieve("Achievement unlocked", "Pressed play. Respect.");
+}
+function closePlayer(){
+  player.classList.remove("open");
+  frame.src = "about:blank";
+  document.body.style.overflow = "";
+}
+frame.addEventListener("load", () => { if (frame.src !== "about:blank") loading.style.display = "none"; });
+document.querySelectorAll("[data-play]").forEach(b => b.addEventListener("click", () =>
+  openPlayer(b.dataset.play, b.dataset.title, b.dataset.hint)));
+document.getElementById("player-close").addEventListener("click", closePlayer);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && player.classList.contains("open") && document.activeElement !== frame) closePlayer(); });
+
+// ---------- I'm feeling lucky ----------
+document.getElementById("lucky").addEventListener("click", () => {
+  const cards = [...document.querySelectorAll(".game:not(.hidden)")];
+  const pick = cards[Math.floor(Math.random() * cards.length)];
+  pick.scrollIntoView({behavior: "smooth", block: "center"});
+  pick.animate([{outline:"6px solid var(--amber)"},{outline:"6px solid transparent"}], {duration: 1400});
+  achieve("Dice rolled", "Fate chose " + pick.querySelector("h3").textContent + ".");
+});
+
+// ---------- discord copy ----------
+document.getElementById("discord").addEventListener("click", e => {
+  e.preventDefault();
+  navigator.clipboard?.writeText("fatal_prathyaym").then(
+    () => achieve("Copied!", "fatal_prathyaym is on your clipboard. Go say hi."),
+    () => achieve("Discord", "Add me: fatal_prathyaym"));
+});
+
+// ---------- konami code, obviously ----------
+const konami = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+let kpos = 0;
+document.addEventListener("keydown", e => {
+  kpos = e.key === konami[kpos] ? kpos + 1 : (e.key === konami[0] ? 1 : 0);
+  if (kpos === konami.length){ kpos = 0; document.body.style.filter = document.body.style.filter ? "" : "hue-rotate(180deg)"; achieve("Secret found", "Konami code. You absolute legend."); }
+});
 </script>
-
-
-
 </body>
 </html>
